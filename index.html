@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+</head>
+<body>
+    <form id="vari">
+        <label for="nlibri">NUMERO STUDENTI:</label>
+        <input type="number" id="nlibri" name="nlibri"><br><br>
+        <button type="submit" id="submit">Invia</button>
+    </form>
+
+
+    <script>
+
+        // Prende il form
+        const form = document.getElementById('vari');
+
+        // Aggiunge l'evento submit al form
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Previene il comportamento predefinito del form (ricaricare la pagina)
+
+            // Prende il valore dell'input
+            const nlibriValue = document.getElementById('nlibri').value;
+
+            // Mostra il valore nella console
+            console.log("Numero libri:", nlibriValue);
+
+
+            localStorage.setItem('n-libri', Number (nlibriValue)) //mando nel magazzino locale //number non è necessario
+
+            window.location.href = "formato.html"; //sfrutto magazzino locale per mantenere variabili
+        });
+
+
+    </script>
+</body>
+</html>
+

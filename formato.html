@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+</head>
+<body> 
+
+    <form id="auth">
+        <label for="Nome">Nome:</label>
+        <input type="text" id="Nome" name="Nome"><br><br>
+
+        <label for="Titolo">Cognome:</label>
+        <input type="text" id="Cognome" name="Cognome"><br><br>
+
+        <label for="Eta">Eta:</label>
+        <input type="number" id="Eta" name="Eta"><br><br>
+
+        <label for="Classe">Classe:</label>
+        <input type="text" id="Classe" name="Classe"><br><br>
+
+        <label for="indirizzo">indirizzo:</label>
+        <input type="text" id="indirizzo" name="indirizzo"><br><br>
+
+
+
+        <button type="submit" id="submit">Inserisci</button>
+        <button type="button" id="media">Media eta</button>
+        <button type="button" id="Studmaggxclasse">Studentimaggxclasse</button>
+    </form>
+
+    <script>
+        var books = [];
+        let media = 0;
+        let submitCount = 0; // Contatore iniziale
+        const maxSubmissions = localStorage.getItem('n-libri'); // Numero massimo di studenti definito da index.html
+
+        // Funzione per calcolare la media degli anni dei studenti
+        function calcolamedia() {
+            if (submitCount > 0) { // Verifica che ci siano submit
+                media = books.reduce((acc, book) => acc + book["Eta"], 0) / submitCount; // itero e calcolo la media
+                alert("La media delle eta è: " + media);
+            } else {
+                alert("Nessun studente inserito per calcolare la media.");
+            }
+        }
+
+/*      
+<?php
+    // Ricevi i dati JSON inviati dal client
+    $data = json_decode(file_get_contents('php://input'), true);
+    // Verifica che i dati siano validi
+    if (is_array($data)) {
+    // Array per tenere traccia dei /Studenti maggiore di 18 per classe
+    $classeCount = [];
+    // Conta i libri per ogni classe
+    foreach ($data as $book) { // For each ripete una azione per ogni istanza
+        $classe = $book['Eta']; // Ottieni l'classe 
+        if (isset($classeCount[$classe]) && [$classe] > 18 ) { //ISSET Controlla se variabile esiste e non è nulla, Se esiste allora ↓
+            $classeCount[$classe]++; // Incrementa il contatore per l'classe
+        } else {
+            $classeCount[$classe] = 1; // Aggiungi classe con un uno studente magg
+        }
+    }
+    // Restituisci i risultati in formato JSON
+    echo json_encode($classeCount);
+} else {
+    // In caso di errore, restituisci un array vuoto
+    echo json_encode([]);
+}
+?>
+*/
+
+
+        
+
+
+        //ES3
+    function maggxclasse() {
+    if (books.length > 0) { // Controlla se ci sono studenti nell'array
+        // Invia l'array 'books' al server tramite una richiesta
+        fetch('formato.php', {
+            method: 'POST', // Tipo di richiesta (POST)
+            headers: {
+                'Content-Type': 'application/json', // JSON
+            },
+            body: JSON.stringify(books) // Converte l'array 'books' in formato JSON per inviarlo al server
+        })
+        .then(response => response.json()) // Quando il server risponde, convertiamo la risposta in formato JSON
+        .then(data => {
+            // Quando riceviamo la risposta dal server, mostriamo il risultato
+            let result = "Numero di studenti per classe:\n";
+            for (const classe in data) { // Itera su ogni classe nel risultato ricevuto
+                result += `${classe}: ${data[classe]} studenti\n`; // Aggiunge il numero di studenti magg per classe alla stringa
+            }
+            alert(result); // Mostra il risultato con un alert
+        })
+        .catch(error => {
+            // Gestione degli errori
+            console.error("Errore durante la richiesta:", error);
+        });
+    } else {
+        // Se non ci sono studenti, mostra un messaggio di avviso
+        alert("Nessun studenti inserito.");
+    }
+}
+
+
+
+
+        // Aggiunta dei studenti con il controllo sul numero massimo di submit
+        const form = document.getElementById('auth');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Previene il comportamento predefinito del form (ricaricare la pagina)
+
+            if (submitCount >= maxSubmissions) {
+                alert("Hai raggiunto il numero massimo di studenti che puoi inserire.");
+                return; // Ferma ulteriori azioni se il limite è stato raggiunto
+            }
+
+            // Aggiunge il libro nell'array
+            books.push({
+                "Nome": document.getElementById('Nome').value,
+                "cognome": document.getElementById('Cognome').value,
+                "Eta": parseInt(document.getElementById('Eta').value),
+                "classe": (document.getElementById('Classe').value),
+                "indirizzo": (document.getElementById('indirizzo').value)
+            });
+            submitCount++; // Incrementa il contatore dei submit
+
+            console.log("studente aggiunto:", books[books.length - 1]);
+            console.log("Numero di studenti inseriti:", submitCount);
+        });
+
+        // Event listeners per i vari pulsanti
+        document.getElementById('media').addEventListener('click', calcolamedia);
+        document.getElementById('Studmaggxclasse').addEventListener('click', maggxclasse);
+
+        console.log(books);
+    </script>
+
+
+</body>
+</html>
